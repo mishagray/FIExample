@@ -1,0 +1,20 @@
+PODS:
+  - DeepDiff (2.2.0)
+  - SwiftLint (0.34.0)
+
+DEPENDENCIES:
+  - DeepDiff
+  - SwiftLint
+
+SPEC REPOS:
+  trunk:
+    - DeepDiff
+    - SwiftLint
+
+SPEC CHECKSUMS:
+  DeepDiff: e329bc46dd14ca788d8ec08d34420799ba1d77f2
+  SwiftLint: 79d48a17c6565dc286c37efb8322c7b450f95c67
+
+PODFILE CHECKSUM: 83bd47d8ebef66ef5d15423ad11447efc63384c7
+
+COCOAPODS: 1.8.0.beta.1
