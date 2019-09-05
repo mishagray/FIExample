@@ -31,7 +31,7 @@ enum API: APIType {
 
     static func loadResturants() -> AnyPublisher<[Restaurant], Error> {
         let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .secondsSince1970
+        decoder.dateDecodingStrategy = .millisecondsSince1970
 
         return URLSession.shared
             .dataTaskPublisher(for: dataUrl)

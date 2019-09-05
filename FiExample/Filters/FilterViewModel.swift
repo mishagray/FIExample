@@ -37,10 +37,5 @@ class FilterViewModel: ObservableObject {
                 changePublisher.send()
             }
 
-        // alternate approuch - is this better?  I don't like modifying this
-
-        // self.cuisines.objectWillChange = self.objectWillChange
-        // self.grades.objectWillChange = self.objectWillChange
-
     }
 }

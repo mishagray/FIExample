@@ -23,8 +23,8 @@ class Annotation: NSObject {
         self.lastGrade = latestInspection?.grade
     }
 
-    var hasLatLong: Bool {
-        return resturant.address.coord.count >= 2
+    var hasValidCoordinate: Bool {
+        return CLLocationCoordinate2DIsValid(self.coordinate)
     }
 
     var cuisine: Cuisine {
@@ -32,17 +32,27 @@ class Annotation: NSObject {
     }
 }
 
+extension Restaurant {
+    var coordinate: CLLocationCoordinate2D {
+        if self.address.coord.count != 2 {
+            return kCLLocationCoordinate2DInvalid
+        }
+        let latitude = self.address.coord[1]
+        let longitude = self.address.coord[0]
+        return CLLocationCoordinate2D(latitude: latitude,
+                                      longitude: longitude)
+    }
+
+    var hasValidCoordinate: Bool {
+        return CLLocationCoordinate2DIsValid(self.coordinate)
+    }
+
+}
+
 extension Annotation: MKAnnotation {
 
-    var latitude: CLLocationDegrees {
-
-        return resturant.address.coord.last ?? 0.0
-    }
-    var longitude: CLLocationDegrees {
-        return resturant.address.coord.first ?? 0.0
-    }
     var coordinate: CLLocationCoordinate2D {
-        return CLLocationCoordinate2D(latitude: self.latitude, longitude: self.longitude)
+        return resturant.coordinate
     }
 
     var title: String? {

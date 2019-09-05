@@ -23,6 +23,9 @@
 		0D23FEEE231DFB33006DC2AA /* CustomClusterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D23FEED231DFB33006DC2AA /* CustomClusterView.swift */; };
 		0D23FEF1231E0874006DC2AA /* CheckableTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D23FEF0231E0874006DC2AA /* CheckableTableViewCell.swift */; };
 		0D23FEF3231E0CA5006DC2AA /* FilterTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D23FEF2231E0CA5006DC2AA /* FilterTableViewController.swift */; };
+		0D7695CF2320BD1200AC31F7 /* ResturantTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D7695CE2320BD1200AC31F7 /* ResturantTableViewController.swift */; };
+		0D7695D12320D28000AC31F7 /* CombineExtras.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D7695D02320D28000AC31F7 /* CombineExtras.swift */; };
+		0D7695D32320D65200AC31F7 /* MapKitExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D7695D22320D65200AC31F7 /* MapKitExtensions.swift */; };
 		0D9E3E93232053BD0012EB00 /* SelectionSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9E3E92232053BD0012EB00 /* SelectionSet.swift */; };
 		0D9E3E95232053F60012EB00 /* FilterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9E3E94232053F60012EB00 /* FilterViewModel.swift */; };
 		0D9E3E9B232058F70012EB00 /* OpenCombine in Frameworks */ = {isa = PBXBuildFile; productRef = 0D9E3E9A232058F70012EB00 /* OpenCombine */; };
@@ -73,6 +76,9 @@
 		0D23FEED231DFB33006DC2AA /* CustomClusterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomClusterView.swift; sourceTree = "<group>"; };
 		0D23FEF0231E0874006DC2AA /* CheckableTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckableTableViewCell.swift; sourceTree = "<group>"; };
 		0D23FEF2231E0CA5006DC2AA /* FilterTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTableViewController.swift; sourceTree = "<group>"; };
+		0D7695CE2320BD1200AC31F7 /* ResturantTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResturantTableViewController.swift; sourceTree = "<group>"; };
+		0D7695D02320D28000AC31F7 /* CombineExtras.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineExtras.swift; sourceTree = "<group>"; };
+		0D7695D22320D65200AC31F7 /* MapKitExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapKitExtensions.swift; sourceTree = "<group>"; };
 		0D9E3E92232053BD0012EB00 /* SelectionSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionSet.swift; sourceTree = "<group>"; };
 		0D9E3E94232053F60012EB00 /* FilterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewModel.swift; sourceTree = "<group>"; };
 		0D9E3E9C232059850012EB00 /* CombineCompatability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineCompatability.swift; sourceTree = "<group>"; };
@@ -146,6 +152,7 @@
 				0D9E3E9E232070570012EB00 /* CombineUtils */,
 				0D23FEEF231E0849006DC2AA /* Filters */,
 				0D23FEE8231C69AC006DC2AA /* Map */,
+				0D7695CD2320BCEA00AC31F7 /* ResturantDetail */,
 				0D23FEB12318F4E1006DC2AA /* AppDelegate.swift */,
 				0D23FEB32318F4E1006DC2AA /* SceneDelegate.swift */,
 				0D23FEB52318F4E1006DC2AA /* ViewController.swift */,
@@ -178,9 +185,10 @@
 		0D23FEE8231C69AC006DC2AA /* Map */ = {
 			isa = PBXGroup;
 			children = (
-				0D23FEE9231C6A04006DC2AA /* MapViewController.swift */,
 				0D23FEEB231C6D95006DC2AA /* Annotation.swift */,
 				0D23FEED231DFB33006DC2AA /* CustomClusterView.swift */,
+				0D7695D22320D65200AC31F7 /* MapKitExtensions.swift */,
+				0D23FEE9231C6A04006DC2AA /* MapViewController.swift */,
 			);
 			path = Map;
 			sourceTree = "<group>";
@@ -190,16 +198,25 @@
 			children = (
 				0D23FEF0231E0874006DC2AA /* CheckableTableViewCell.swift */,
 				0D23FEF2231E0CA5006DC2AA /* FilterTableViewController.swift */,
-				0D9E3E92232053BD0012EB00 /* SelectionSet.swift */,
 				0D9E3E94232053F60012EB00 /* FilterViewModel.swift */,
+				0D9E3E92232053BD0012EB00 /* SelectionSet.swift */,
 			);
 			path = Filters;
+			sourceTree = "<group>";
+		};
+		0D7695CD2320BCEA00AC31F7 /* ResturantDetail */ = {
+			isa = PBXGroup;
+			children = (
+				0D7695CE2320BD1200AC31F7 /* ResturantTableViewController.swift */,
+			);
+			path = ResturantDetail;
 			sourceTree = "<group>";
 		};
 		0D9E3E9E232070570012EB00 /* CombineUtils */ = {
 			isa = PBXGroup;
 			children = (
 				0D9E3E9C232059850012EB00 /* CombineCompatability.swift */,
+				0D7695D02320D28000AC31F7 /* CombineExtras.swift */,
 				0D9E3EA0232070990012EB00 /* UIControlPublisher.swift */,
 			);
 			path = CombineUtils;
@@ -514,9 +531,12 @@
 				0D23FEF1231E0874006DC2AA /* CheckableTableViewCell.swift in Sources */,
 				0D23FEE2231C4F7F006DC2AA /* Restaurant.swift in Sources */,
 				0D9E3E9D232059850012EB00 /* CombineCompatability.swift in Sources */,
+				0D7695CF2320BD1200AC31F7 /* ResturantTableViewController.swift in Sources */,
+				0D7695D12320D28000AC31F7 /* CombineExtras.swift in Sources */,
 				0D23FEEC231C6D95006DC2AA /* Annotation.swift in Sources */,
 				0D23FEEA231C6A04006DC2AA /* MapViewController.swift in Sources */,
 				0D9E3E93232053BD0012EB00 /* SelectionSet.swift in Sources */,
+				0D7695D32320D65200AC31F7 /* MapKitExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -10,6 +10,24 @@ import UIKit
 import MapKit
 
 extension Annotation {
+
+    var label: String {
+        switch self.lastGrade {
+        case .a:
+            // NYC A color
+            return "A"
+        case .b:
+            return "B"
+            // return UIColor(red: 228/255.0, green: 161.0/255.0, blue: 59.0/255.0, alpha: 1.0)
+        case .c:
+            return "C"
+        case .notYetGraded:
+            return "?"
+        default:
+            return "X"
+        }
+    }
+
     var color: UIColor {
         // Based on the official letter colors that appear in the windows
         switch self.lastGrade {
@@ -29,7 +47,8 @@ extension Annotation {
     }
 
     var clusteringIdentifier: String {
-        return "resturant"
+        self.label
+//        return "resturant"
 //        switch self.lastGrade {
 //        case .a:
 //            return "a"
@@ -59,6 +78,7 @@ private extension ResturantView {
         //    CONFIGURE
 
         markerTintColor = annotation.color
+        glyphText = annotation.label
         clusteringIdentifier = annotation.clusteringIdentifier
         canShowCallout = true
 //        animatesWhenAdded = true
@@ -104,12 +124,24 @@ private extension CustomClusterView {
         DispatchQueue.global(qos: .utility).async {
 
             let count = annotation.memberAnnotations.count
-            let size = count >= 100 ? CGSize(width: 40.0, height: 40.0) : CGSize(width: 30.0, height: 30.0)
+
+            let size: CGSize
+
+            if count >= 100 {
+                size = CGSize(width: 40.0, height: 40.0)
+            } else {
+                size = CGSize(width: 30.0, height: 30.0)
+            }
+
+            guard let first = annotation.memberAnnotations.first as? Annotation else {
+                return
+            }
 
             let renderer = UIGraphicsImageRenderer(size: size)
             let image = renderer.image { _ in
 
-                UIColor.purple.setFill()
+                first.color.setFill()
+//                UIColor.purple.setFill()
                 UIBezierPath(ovalIn: CGRect(origin: .zero, size: size)).fill()
                 let attributes: [NSAttributedString.Key: Any] = [.foregroundColor: UIColor.white,
                                                                  .font: UIFont.systemFont(ofSize: 12.0)]

@@ -18,9 +18,15 @@ struct AnnotationChanges {
 
 class MapViewModel {
 
-    let changes: AnyPublisher<AnnotationChanges, Never>
+//    let changes: AnyPublisher<AnnotationChanges, Never>
+
+    let changes =
+        CurrentValueSubject<AnnotationChanges, Never>(AnnotationChanges(annotations: [],
+                                                                        changes: []))
 
     var filterViewModel: FilterViewModel
+
+    private var innerCancelable: AnyCancellable
 
     init<Model: ModelType>(model: Model) {
 
@@ -29,34 +35,30 @@ class MapViewModel {
 
         // let's defer our publisher so we don't actually fire up the model publisher, until we get a subscriber.
         // 'safer' behavior inside of init()
-        let annotations = Deferred { () -> CurrentValueSubject<[Restaurant], Never> in
-            // we will auto refresh the model when subscription happens.
-            // this is the secret to 'Defered'
-            model.refresh()
-            return model.resturants
-        }
-        .map {
-            $0.map { Annotation(resturant: $0) }
-                .filter {
-                    let hasTitle = !$0.resturant.name.isEmpty
-                    return $0.hasLatLong && hasTitle
-            }  // ignore un-map-able resturants.
+        let annotations = model.resturants.map {
+            // filter out bad/unmappable data
+            $0.filter {
+                let hasTitle = !$0.name.isEmpty
+                return hasTitle && $0.hasValidCoordinate
+            }
+            .map { Annotation(resturant: $0) }
         }
 
-        // we want to add prepend() to objectwillchange so it will always initial fire.
-        // otherwise combineLatest won't fire right away.
-        let filterViewModelChanges = filterViewModel
-            .objectWillChange
-            .receive(on: RunLoop.main)
-            .prepend(())
-            .map { _ in filters }
+        let viewModelChanges =
+            filterViewModel
+                .objectDidChange
+                .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+                .handleEvents(receiveOutput: { _ in
+                    print("got objectDidChange")
+                })
 
         // let's mixup the resturants signal from the API with the user's filters.
         let mapChanges =
             Publishers
-                .CombineLatest(filterViewModelChanges, annotations)
+                .CombineLatest(viewModelChanges, annotations)
                 .map { filterView, annotations -> [Annotation] in
 
+                    // filter out Annotations that the user doesn't want to see
                     let byCuisine: [Annotation]
                     if !filterView.cuisines.allValuesSelected {
                         byCuisine = annotations.compactMap {
@@ -87,33 +89,43 @@ class MapViewModel {
                 }
 
         let initialChange = AnnotationChanges(annotations: [], changes: [])
-        self.changes = mapChanges.scan(initialChange) { (prevChangeSet, annotations) -> AnnotationChanges in
+        // this is sort of like reduce.
+        // this will let us compute what Annotations have been added or removed by either
+        // API or by the filtering.
+        self.innerCancelable = mapChanges.scan(initialChange) { (prevChangeSet, annotations) -> AnnotationChanges in
+
             // this is supposed to be super fast at computing changes to an array of stuff.
-            // very similar to ios13 diffable datasource, excepct that doesn't work for MapKit
-            let changes = diff(old: prevChangeSet.annotations, new: annotations)
+            // very similar to ios 13 diffable datasource
+            // but they didn't add diffable datasources to Mapkit, so we will bake our own.
+            // super fast even on 25k items.
+            let changes = DeepDiff.diff(old: prevChangeSet.annotations, new: annotations)
 
             print("number of changes = \(changes.count)")
 
             return AnnotationChanges(annotations: annotations, changes: changes)
         }
-        .eraseToAnyPublisher()
+        .subscribe(changes)
+
     }
 
 }
 
 class MapViewController: UIViewController {
 
-    let nycRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 40.75317535957268,
-                                                                      longitude: -73.86879663961409),
-                                       span: MKCoordinateSpan(latitudeDelta: 0.4565580072588986,
-                                                              longitudeDelta: 0.503999396804474))
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 
     @IBOutlet weak var mapView: MKMapView!
+
+    static let nycRegion = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: 40.75317535957268,
+                                       longitude: -73.86879663961409),
+        span: MKCoordinateSpan(latitudeDelta: 0.4565580072588986,
+                               longitudeDelta: 0.503999396804474))
 
     static let model = Model<API>()
     var viewModel = MapViewModel(model: MapViewController.model)
 
-    var cancellabbles = Set<AnyCancellable>()
+    var cancellables = Set<AnyCancellable>()
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -124,7 +136,7 @@ class MapViewController: UIViewController {
         mapView.register(ResturantView.self,
                          forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
 
-        mapView.setRegion(nycRegion, animated: true)
+        mapView.setRegion(MapViewController.nycRegion, animated: true)
 
         viewModel
             .changes
@@ -132,43 +144,11 @@ class MapViewController: UIViewController {
             .sink { [weak self] annotationChanges in
                 self?.applyChanges(changes: annotationChanges.changes)
             }
-            .store(in: &cancellabbles)
+            .store(in: &cancellables)
+
+        MapViewController.model.refresh()
 
         // Do any additional setup after loading the view.
-    }
-
-    func applyChangesOld(changes: [Change<Annotation>]) {
-
-        print("adding changes")
-        let deletions = changes.compactMap { change -> Annotation? in
-            switch change {
-            case let .delete(deletion):
-                return deletion.item
-            case let .replace(replacement):
-                return replacement.oldItem
-            default:
-                return nil
-            }
-        }
-
-        let insertions = changes.compactMap { change -> Annotation? in
-            switch change {
-            case let .insert(insertion):
-                return insertion.item
-            case let .replace(replacement):
-                return replacement.newItem
-            default:
-                return nil
-            }
-        }
-
-        if !deletions.isEmpty {
-            self.mapView.removeAnnotations(deletions)
-        }
-        if !insertions.isEmpty {
-            self.mapView.addAnnotations(insertions)
-        }
-        print("changes added")
     }
 
     func applyChanges(changes: [Change<Annotation>]) {
@@ -216,6 +196,11 @@ class MapViewController: UIViewController {
         if let filterTable = segue.destination as? FilterTableViewController {
             filterTable.viewModel = self.viewModel.filterViewModel
         }
+
+        if let detailView = segue.destination as? ResturantTableViewController, let annotation = sender as? Annotation {
+            detailView.annotation = annotation
+        }
+
     }
 
 }
@@ -230,40 +215,6 @@ extension CLLocationCoordinate2D: Hashable {
         hasher.combine(self.longitude)
     }
 
-}
-
-extension MKMapRect {
-    func union(with cood: CLLocationCoordinate2D) -> MKMapRect {
-        if !CLLocationCoordinate2DIsValid(cood) {
-            return self
-        }
-        let newPoint = MKMapPoint(cood)
-        return self.union(with: newPoint)
-    }
-
-    func union(with point: MKMapPoint) -> MKMapRect {
-        if !CLLocationCoordinate2DIsValid(point.coordinate) {
-            return self
-        }
-        let newRect = MKMapRect(origin: point, size: MKMapSize(width: 0.0, height: 0.0))
-
-        if self.isNull {
-            return newRect
-        } else {
-            return self.union(newRect)
-        }
-    }
-
-    var maxPoint: MKMapPoint {
-        if self.isNull {
-            return MKMapPoint(kCLLocationCoordinate2DInvalid)
-        }
-        return MKMapPoint(x: self.maxX, y: self.maxY)
-    }
-
-    var diagnalDistance: CLLocationDistance {
-        self.origin.distance(to: self.maxPoint)
-    }
 }
 
 extension MapViewController: MKMapViewDelegate {
@@ -287,9 +238,9 @@ extension MapViewController: MKMapViewDelegate {
 //        print("new region = \(mapView.region)")
 //    }
 
-//    func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
-//        print("mapView(_:didAdd: \(views.count)")
-//    }
+    func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
+        self.activityIndicator.stopAnimating()
+    }
 
     func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
 
@@ -315,8 +266,9 @@ extension MapViewController: MKMapViewDelegate {
 
                 for annotation in cluster.memberAnnotations {
                     if let title = annotation.title {
-                        let action = UIAlertAction(title: title, style: .default) { (_) in
-                            // when ok is tapped
+                        let action = UIAlertAction(title: title, style: .default) { _ in
+                            self.performSegue(withIdentifier: "showResturant",
+                                              sender: annotation)
                         }
                         alertController.addAction(action)
                     }
@@ -328,6 +280,9 @@ extension MapViewController: MKMapViewDelegate {
         }
         if let annotation = view.annotation as? Annotation {
             print("\(annotation) found")
+
+            self.performSegue(withIdentifier: "showResturant",
+                              sender: annotation)
         }
         print("mapView(_:didSelect: \(view)")
     }
