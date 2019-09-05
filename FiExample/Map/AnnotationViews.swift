@@ -21,10 +21,12 @@ extension Annotation {
             // return UIColor(red: 228/255.0, green: 161.0/255.0, blue: 59.0/255.0, alpha: 1.0)
         case .c:
             return "C"
-        case .notYetGraded:
+        case .notYetGraded, .none:
             return "?"
-        default:
-            return "X"
+        case .p:
+            return "P"
+        case .z:
+            return "Z"
         }
     }
 
@@ -36,7 +38,6 @@ extension Annotation {
             return #colorLiteral(red: 0.1803921569, green: 0.3176470588, blue: 1, alpha: 1)
         case .b:
             return #colorLiteral(red: 0.3058823529, green: 0.6392156863, blue: 0.2509803922, alpha: 1)
-            // return UIColor(red: 228/255.0, green: 161.0/255.0, blue: 59.0/255.0, alpha: 1.0)
         case .c:
             return #colorLiteral(red: 0.8941176471, green: 0.631372549, blue: 0.231372549, alpha: 1)
         case .notYetGraded:
@@ -46,7 +47,18 @@ extension Annotation {
         }
     }
 
-    var clusteringIdentifier: String {
+    var displayPriority: MKFeatureDisplayPriority {
+        switch self.lastGrade {
+        case .a, .b:
+            return .required
+        default:
+            return .defaultHigh
+        }
+
+    }
+
+    var clusteringIdentifier: String? {
+//        return nil
         self.label
 //        return "resturant"
 //        switch self.lastGrade {
@@ -85,7 +97,7 @@ private extension ResturantView {
     }
 }
 
-class CustomClusterView: MKAnnotationView {
+class CustomClusterView: MKMarkerAnnotationView {
     // MARK: Properties
     internal override var annotation: MKAnnotation? {
         willSet {
@@ -97,7 +109,7 @@ class CustomClusterView: MKAnnotationView {
         super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
         displayPriority = .defaultHigh
         collisionMode = .rectangle
-        centerOffset = CGPoint(x: 0.0, y: -10.0)
+//        centerOffset = CGPoint(x: 0.0, y: -10.0)
     }
     required init?(coder aDecoder: NSCoder) {
         fatalError("\(#function) not implemented.")
@@ -106,7 +118,21 @@ class CustomClusterView: MKAnnotationView {
 // MARK: Configuration
 private extension CustomClusterView {
     func configure(with annotation: MKAnnotation) {
-        guard let annotation = annotation as? MKClusterAnnotation else { return }
+        guard
+            let annotation = annotation as? MKClusterAnnotation,
+            let first = annotation.memberAnnotations.first as? Annotation else {
+                return
+        }
+
+        let count = annotation.memberAnnotations.count
+        let text = count <= 1000 ? "\(count)" : "1000+"
+        //
+
+        glyphText = text
+        displayPriority = first.displayPriority
+        markerTintColor = first.color
+        subtitleVisibility = .hidden
+        titleVisibility = .hidden
 
 //        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 40.0, height: 40.0))
 //        let count = annotation.memberAnnotations.count
@@ -121,45 +147,45 @@ private extension CustomClusterView {
 //            text.draw(in: rect, withAttributes: attributes)
 //        }
 
-        DispatchQueue.global(qos: .utility).async {
-
-            let count = annotation.memberAnnotations.count
-
-            let size: CGSize
-
-            if count >= 100 {
-                size = CGSize(width: 40.0, height: 40.0)
-            } else {
-                size = CGSize(width: 30.0, height: 30.0)
-            }
-
-            guard let first = annotation.memberAnnotations.first as? Annotation else {
-                return
-            }
-
-            let renderer = UIGraphicsImageRenderer(size: size)
-            let image = renderer.image { _ in
-
-                first.color.setFill()
-//                UIColor.purple.setFill()
-                UIBezierPath(ovalIn: CGRect(origin: .zero, size: size)).fill()
-                let attributes: [NSAttributedString.Key: Any] = [.foregroundColor: UIColor.white,
-                                                                 .font: UIFont.systemFont(ofSize: 12.0)]
-
-                let text = count <= 1000 ? "\(count)" : "1000+"
-                let textSize = text.size(withAttributes: attributes)
-                let rect = CGRect(x: (size.width / 2) - textSize.width / 2,
-                                  y: (size.height / 2) - textSize.height / 2,
-                                  width: textSize.width,
-                                  height: textSize.height)
-                text.draw(in: rect, withAttributes: attributes)
-            }
-
-            DispatchQueue.main.async {
-                if self.annotation === annotation {
-                    self.image = image
-                }
-            }
-        }
+//        DispatchQueue.global(qos: .utility).async {
+//
+//            let count = annotation.memberAnnotations.count
+//
+//            let size: CGSize
+//
+//            if count >= 100 {
+//                size = CGSize(width: 40.0, height: 40.0)
+//            } else {
+//                size = CGSize(width: 30.0, height: 30.0)
+//            }
+//
+//            guard let first = annotation.memberAnnotations.first as? Annotation else {
+//                return
+//            }
+//
+//            let renderer = UIGraphicsImageRenderer(size: size)
+//            let image = renderer.image { _ in
+//
+//                first.color.setFill()
+////                UIColor.purple.setFill()
+//                UIBezierPath(ovalIn: CGRect(origin: .zero, size: size)).fill()
+//                let attributes: [NSAttributedString.Key: Any] = [.foregroundColor: UIColor.white,
+//                                                                 .font: UIFont.systemFont(ofSize: 12.0)]
+//
+//                let text = count <= 1000 ? "\(count)" : "1000+"
+//                let textSize = text.size(withAttributes: attributes)
+//                let rect = CGRect(x: (size.width / 2) - textSize.width / 2,
+//                                  y: (size.height / 2) - textSize.height / 2,
+//                                  width: textSize.width,
+//                                  height: textSize.height)
+//                text.draw(in: rect, withAttributes: attributes)
+//            }
+//
+//            DispatchQueue.main.async {
+//                if self.annotation === annotation {
+//                    self.image = image
+//                }
+//            }
+//        }
     }
 }
