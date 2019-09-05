@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -25,6 +25,9 @@
 		0D23FEF3231E0CA5006DC2AA /* FilterTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D23FEF2231E0CA5006DC2AA /* FilterTableViewController.swift */; };
 		0D9E3E93232053BD0012EB00 /* SelectionSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9E3E92232053BD0012EB00 /* SelectionSet.swift */; };
 		0D9E3E95232053F60012EB00 /* FilterViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9E3E94232053F60012EB00 /* FilterViewModel.swift */; };
+		0D9E3E9B232058F70012EB00 /* OpenCombine in Frameworks */ = {isa = PBXBuildFile; productRef = 0D9E3E9A232058F70012EB00 /* OpenCombine */; };
+		0D9E3E9D232059850012EB00 /* CombineCompatability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9E3E9C232059850012EB00 /* CombineCompatability.swift */; };
+		0D9E3EA1232070990012EB00 /* UIControlPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D9E3EA0232070990012EB00 /* UIControlPublisher.swift */; };
 		5092B8DFCC128D18D16E05C7 /* Pods_FiExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1BADA5BCC58E954A799D80B6 /* Pods_FiExample.framework */; };
 		699FEA11E2F39C9A58302AC4 /* Pods_FiExample_FiExampleUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 901399178CA64786F1E863EE /* Pods_FiExample_FiExampleUITests.framework */; };
 		D299BE10497B5971CD9F1C32 /* Pods_FiExampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FAFA5CCCA2918B3FE040BAE0 /* Pods_FiExampleTests.framework */; };
@@ -72,6 +75,8 @@
 		0D23FEF2231E0CA5006DC2AA /* FilterTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTableViewController.swift; sourceTree = "<group>"; };
 		0D9E3E92232053BD0012EB00 /* SelectionSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectionSet.swift; sourceTree = "<group>"; };
 		0D9E3E94232053F60012EB00 /* FilterViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewModel.swift; sourceTree = "<group>"; };
+		0D9E3E9C232059850012EB00 /* CombineCompatability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineCompatability.swift; sourceTree = "<group>"; };
+		0D9E3EA0232070990012EB00 /* UIControlPublisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIControlPublisher.swift; sourceTree = "<group>"; };
 		0FA5465EFFB7070C30D6A488 /* Pods-FiExample-FiExampleUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FiExample-FiExampleUITests.release.xcconfig"; path = "Target Support Files/Pods-FiExample-FiExampleUITests/Pods-FiExample-FiExampleUITests.release.xcconfig"; sourceTree = "<group>"; };
 		1BADA5BCC58E954A799D80B6 /* Pods_FiExample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_FiExample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		318ADB8A4119FAA583CF2D6C /* Pods-FiExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FiExampleTests.release.xcconfig"; path = "Target Support Files/Pods-FiExampleTests/Pods-FiExampleTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -88,6 +93,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0D9E3E9B232058F70012EB00 /* OpenCombine in Frameworks */,
 				5092B8DFCC128D18D16E05C7 /* Pods_FiExample.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -136,6 +142,8 @@
 		0D23FEB02318F4E1006DC2AA /* FiExample */ = {
 			isa = PBXGroup;
 			children = (
+				0D9E3E9F2320706F0012EB00 /* API */,
+				0D9E3E9E232070570012EB00 /* CombineUtils */,
 				0D23FEEF231E0849006DC2AA /* Filters */,
 				0D23FEE8231C69AC006DC2AA /* Map */,
 				0D23FEB12318F4E1006DC2AA /* AppDelegate.swift */,
@@ -145,9 +153,6 @@
 				0D23FEBA2318F4E3006DC2AA /* Assets.xcassets */,
 				0D23FEBC2318F4E3006DC2AA /* LaunchScreen.storyboard */,
 				0D23FEBF2318F4E3006DC2AA /* Info.plist */,
-				0D23FEE1231C4F7F006DC2AA /* Restaurant.swift */,
-				0D23FEE3231C53A7006DC2AA /* API.swift */,
-				0D23FEE6231C62A4006DC2AA /* Model.swift */,
 			);
 			path = FiExample;
 			sourceTree = "<group>";
@@ -189,6 +194,25 @@
 				0D9E3E94232053F60012EB00 /* FilterViewModel.swift */,
 			);
 			path = Filters;
+			sourceTree = "<group>";
+		};
+		0D9E3E9E232070570012EB00 /* CombineUtils */ = {
+			isa = PBXGroup;
+			children = (
+				0D9E3E9C232059850012EB00 /* CombineCompatability.swift */,
+				0D9E3EA0232070990012EB00 /* UIControlPublisher.swift */,
+			);
+			path = CombineUtils;
+			sourceTree = "<group>";
+		};
+		0D9E3E9F2320706F0012EB00 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				0D23FEE3231C53A7006DC2AA /* API.swift */,
+				0D23FEE6231C62A4006DC2AA /* Model.swift */,
+				0D23FEE1231C4F7F006DC2AA /* Restaurant.swift */,
+			);
+			path = API;
 			sourceTree = "<group>";
 		};
 		774FA9CA67D563C999D2AE6E /* Pods */ = {
@@ -233,6 +257,9 @@
 			dependencies = (
 			);
 			name = FiExample;
+			packageProductDependencies = (
+				0D9E3E9A232058F70012EB00 /* OpenCombine */,
+			);
 			productName = FiExample;
 			productReference = 0D23FEAE2318F4E1006DC2AA /* FiExample.app */;
 			productType = "com.apple.product-type.application";
@@ -308,6 +335,9 @@
 				Base,
 			);
 			mainGroup = 0D23FEA52318F4E1006DC2AA;
+			packageReferences = (
+				0D9E3E99232058F70012EB00 /* XCRemoteSwiftPackageReference "OpenCombine" */,
+			);
 			productRefGroup = 0D23FEAF2318F4E1006DC2AA /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -363,7 +393,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\nif which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n  # ${PODS_ROOT}/SwiftLint/swiftlint autocorrect\n  ${PODS_ROOT}/SwiftLint/swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n\nif which ${PODS_ROOT}/SwiftLint/swiftlint >/dev/null; then\n  ${PODS_ROOT}/SwiftLint/swiftlint autocorrect >/dev/null\n  ${PODS_ROOT}/SwiftLint/swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 		1CA4E458AB3D14D6D2552FA6 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -474,6 +504,7 @@
 			files = (
 				0D23FEF3231E0CA5006DC2AA /* FilterTableViewController.swift in Sources */,
 				0D23FEE4231C53A7006DC2AA /* API.swift in Sources */,
+				0D9E3EA1232070990012EB00 /* UIControlPublisher.swift in Sources */,
 				0D23FEB62318F4E1006DC2AA /* ViewController.swift in Sources */,
 				0D9E3E95232053F60012EB00 /* FilterViewModel.swift in Sources */,
 				0D23FEB22318F4E1006DC2AA /* AppDelegate.swift in Sources */,
@@ -482,6 +513,7 @@
 				0D23FEB42318F4E1006DC2AA /* SceneDelegate.swift in Sources */,
 				0D23FEF1231E0874006DC2AA /* CheckableTableViewCell.swift in Sources */,
 				0D23FEE2231C4F7F006DC2AA /* Restaurant.swift in Sources */,
+				0D9E3E9D232059850012EB00 /* CombineCompatability.swift in Sources */,
 				0D23FEEC231C6D95006DC2AA /* Annotation.swift in Sources */,
 				0D23FEEA231C6A04006DC2AA /* MapViewController.swift in Sources */,
 				0D9E3E93232053BD0012EB00 /* SelectionSet.swift in Sources */,
@@ -815,6 +847,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		0D9E3E99232058F70012EB00 /* XCRemoteSwiftPackageReference "OpenCombine" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/epatey/OpenCombine";
+			requirement = {
+				branch = scan;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		0D9E3E9A232058F70012EB00 /* OpenCombine */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0D9E3E99232058F70012EB00 /* XCRemoteSwiftPackageReference "OpenCombine" */;
+			productName = OpenCombine;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0D23FEA62318F4E1006DC2AA /* Project object */;
 }

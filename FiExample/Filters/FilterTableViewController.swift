@@ -9,7 +9,6 @@
 import UIKit
 import Combine
 
-
 extension FilterViewModel {
 
     func selectionSet(section: FilterTableViewController.Sections) -> SelectionSet {
@@ -65,11 +64,16 @@ class FilterTableViewController: UITableViewController {
     }
 
     var viewModelCancellable: AnyCancellable?
-
     func bindToModel() {
-        viewModelCancellable = viewModel.objectWillChange.sink { [weak self] in
-            self?.tableView?.reloadData()
-        }
+
+        self.tableView?.reloadData()
+        // this will automatically discard the previous value of viewModelCancellable,
+        // so subsequent calls to bindToModel() cancel the previous bindings.
+        viewModelCancellable = viewModel.objectWillChange
+            .subscribe(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.tableView?.reloadData()
+            }
 
     }
 

@@ -12,12 +12,23 @@ import DeepDiff
 class Annotation: NSObject {
     let resturant: Restaurant
 
+    let lastGrade: Grade?
+
     init(resturant rest: Restaurant) {
         self.resturant = rest
+
+        let latestInspection = rest.grades.max { (inspectionA, inspectionB) -> Bool in
+            inspectionA.date.date < inspectionB.date.date
+        }
+        self.lastGrade = latestInspection?.grade
     }
 
     var hasLatLong: Bool {
         return resturant.address.coord.count >= 2
+    }
+
+    var cuisine: Cuisine {
+        self.resturant.cuisine
     }
 }
 
