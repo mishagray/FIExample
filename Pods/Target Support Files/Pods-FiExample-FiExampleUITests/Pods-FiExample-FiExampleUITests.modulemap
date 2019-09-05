@@ -1,0 +1,6 @@
+framework module Pods_FiExample_FiExampleUITests {
+  umbrella header "Pods-FiExample-FiExampleUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}

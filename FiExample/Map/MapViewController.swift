@@ -18,16 +18,15 @@ struct AnnotationChanges {
 
 class MapViewModel {
 
-//    let changes: AnyPublisher<AnnotationChanges, Never>
+    let changes: AnyPublisher<AnnotationChanges, Never>
 
-    let changes =
-        CurrentValueSubject<AnnotationChanges, Never>(AnnotationChanges(annotations: [],
-                                                                        changes: []))
+//    let changes =
+//        CurrentValueSubject<AnnotationChanges, Never>(AnnotationChanges(annotations: [],
+//                                                                        changes: []))
 
     var filterViewModel: FilterViewModel
 
-    private var innerCancelable: AnyCancellable
-
+    // swiftlint:disable:next function_body_length
     init<Model: ModelType>(model: Model) {
 
         let filters = FilterViewModel()
@@ -35,19 +34,27 @@ class MapViewModel {
 
         // let's defer our publisher so we don't actually fire up the model publisher, until we get a subscriber.
         // 'safer' behavior inside of init()
-        let annotations = model.resturants.map {
-            // filter out bad/unmappable data
-            $0.filter {
-                let hasTitle = !$0.name.isEmpty
-                return hasTitle && $0.hasValidCoordinate
-            }
-            .map { Annotation(resturant: $0) }
+        let annotations = Deferred<AnyPublisher<[Annotation], Never>> {
+            // we can do refresh here, since we are delaying until subscription
+            model.refresh()
+            return model
+                .resturants
+                .map {
+                    // filter out bad/unmappable data
+                    $0.filter {
+                        let hasTitle = !$0.name.isEmpty
+                        return hasTitle && $0.hasValidCoordinate
+                    }
+                    // convert them to Annotation
+                    .map { Annotation(resturant: $0) }
+                }
+                .eraseToAnyPublisher()
         }
 
-        let viewModelChanges =
-            filterViewModel
-                .objectDidChange
-                .debounce(for: .seconds(1), scheduler: DispatchQueue.main)
+        let viewModelChanges = filterViewModel.objectDidChange
+                // let's add some debounce time so we will ignore
+                // changes until the user has stopped selecting them
+                .debounce(for: .seconds(2), scheduler: DispatchQueue.main)
                 .handleEvents(receiveOutput: { _ in
                     print("got objectDidChange")
                 })
@@ -92,7 +99,7 @@ class MapViewModel {
         // this is sort of like reduce.
         // this will let us compute what Annotations have been added or removed by either
         // API or by the filtering.
-        self.innerCancelable = mapChanges.scan(initialChange) { (prevChangeSet, annotations) -> AnnotationChanges in
+        self.changes = mapChanges.scan(initialChange) { (prevChangeSet, annotations) -> AnnotationChanges in
 
             // this is supposed to be super fast at computing changes to an array of stuff.
             // very similar to ios 13 diffable datasource
@@ -104,7 +111,7 @@ class MapViewModel {
 
             return AnnotationChanges(annotations: annotations, changes: changes)
         }
-        .subscribe(changes)
+        .eraseToAnyPublisher()
 
     }
 
@@ -154,7 +161,7 @@ class MapViewController: UIViewController {
     func applyChanges(changes: [Change<Annotation>]) {
 
         var idx = changes.startIndex
-        let maxRangeSize = 1000
+        let maxRangeSize = 50000
 
         if changes.count == 0 {
             print("no changes")
