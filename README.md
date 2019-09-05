@@ -37,13 +37,16 @@ Tapping on a grouped cluster should just zoom you in until they separate into in
 
 The Letter indicates the 'grade'.  Tapping on it should show you a resturant Detail page, with it's inspection history.  
 
-Items are 'clustered' by the 'last' grade received.  It's still not optimal to zoom out too much.  
-25k+ Annotations maybe pushing the MapKit clustering logic.  
+Items are 'clustered' by the 'last' grade received.  It's still not optimal to zoom out too much.
+25k+ Annotations maybe pushing the MapKit clustering logic.   I've tweaked it a bunch to try and increase performance, but we maybe pushing it with this number of Annotations.
 
 There is a simple 'filter' screen that let's you filter by Cuisines and by Grades.  
 It wouldn't have been hard to add 'near an address', but getting the 'zoom to somewhere else on the map' is always trickier than it seems.
 
-There is a very simple Resturant Detail page.
+There is a very simple Resturant Detail page. 
+
+
+
 
 
 
